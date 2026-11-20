@@ -21,7 +21,7 @@ completed certificates, or real patient data.
 3. Confirm installation.
 4. Open the installed app once while online.
 
-## 3. iPhone and iPad
+## 3. iPhone and iPad (iOS-compatible build)
 
 1. Open the HTTPS application address in Safari.
 2. Tap **Share**.
@@ -30,6 +30,13 @@ completed certificates, or real patient data.
 5. Tap **Add**, then open the new home-screen icon once while online.
 
 iOS behaviour varies by version. Test the actual device before operational use.
+
+### Saving PDF and DOC on iPhone/iPad
+- Tap **Download PDF** or **Save as DOC** in the certificate preview.
+- On supported iOS versions, the iOS Share sheet opens.
+- Choose **Save to Files**, then select the required folder and tap **Save**.
+- If file sharing is not available on an older iOS version, the file opens in a new
+  browser view; use Share > Save to Files from there.
 
 ## 4. Windows
 

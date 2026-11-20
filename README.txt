@@ -30,7 +30,9 @@ but does not install the PWA or activate service-worker caching.
 
 There is no login, application backend, patient database or patient-data upload.
 The service worker caches application files only; it does not cache patient form
-entries or completed certificate contents.
+entries or completed certificate contents. The preview and file export include iOS
+Safari support, including the iOS Share sheet for Save to Files. The preview and file export include iOS
+Safari support, including the iOS Share sheet for Save to Files.
 
 The direct PDF file is created locally on the device. It is rendered as a high-resolution
 page image to preserve the certificate's layout consistently; PDF text may not be

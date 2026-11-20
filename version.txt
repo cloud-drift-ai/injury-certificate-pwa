@@ -1,3 +1,4 @@
 Injury Certificate PWA
-Version: 1.0.0
+Version: 1.0.1
 Based on: Approved Injury Certificate Version 8
+Changes: Word-compatible DOC export; direct-download A4 PDF generation.

@@ -38,25 +38,31 @@ iOS behaviour varies by version. Test the actual device before operational use.
    **Apps > Install this site as an app**.
 3. Confirm installation and open it once while online.
 
-## 5. Test offline
+## 5. Test offline and exports
 
 After the first successful online opening:
 
 1. Close the application.
 2. Enable airplane mode or disconnect Wi-Fi/mobile data.
 3. Reopen Injury Certificate from its installed icon.
-4. Test patient form entry, Add Injury, No Visible Injury, all three treatment
-   options, Preview, Edit, Print and Save as DOC.
-5. Test PDF output with the actual phones, computers and printers used by the clinic.
+4. Test patient form entry, Add Injury, No Visible Injury, all three treatment options,
+   Preview, Edit, Print, Download PDF and Save as DOC.
+5. Open the DOC file in Microsoft Word and check the A4 page layout.
+6. Open the PDF and check the A4 page layout and legibility.
 
-Do not use the application operationally until offline reopening and printing have
-been tested on the actual devices.
+The direct PDF action generates a PDF locally without opening the print dialog. It uses a
+high-resolution image of the certificate to preserve layout; text in that PDF may not be
+selectable. The DOC export is a Word-compatible HTML `.doc` file using table-based layout,
+not a native `.docx` file.
+
+Do not use the application operationally until offline reopening, PDF/DOC exports and
+printing have been tested on the actual devices and printers used by the health complex.
 
 ## 6. Updates
 
 For each new release, change the cache name in `service-worker.js`, for example:
 
-`const CACHE_NAME = "injury-certificate-v2";`
+`const CACHE_NAME = "injury-certificate-v1-0-2";`
 
 Upload all updated files. Devices should reconnect to the HTTPS address to fetch the
 new version. Ask staff to open the app online before their next offline session.
@@ -67,11 +73,6 @@ new version. Ask staff to open the app online before their next offline session.
 - The service worker caches application files only.
 - Form submissions and certificate contents are not stored by the service worker.
 - Do not place completed certificates or patient information in the hosting folder.
-- Close the app after printing and follow the health complex's confidentiality policy.
-- Browser memory, printing and file-export behaviour vary by device and browser.
-
-## 8. Limitations
-
-This is an offline-capable static PWA, not a medical-record system. HTTPS hosting is
-needed for initial installation and later updates. If browser site data is cleared,
-or the app is removed, it must be opened online again to cache the application.
+- Close the app after printing/exporting and follow the health complex's confidentiality
+  policy.
+- Browser memory, file downloads and printing behaviour vary by device and browser.

@@ -1,4 +1,4 @@
-const CACHE_NAME = "injury-certificate-v1";
+const CACHE_NAME = "injury-certificate-v1-0-1";
 const APP_FILES = [
   "./",
   "./index.html",

@@ -372,7 +372,450 @@ function collectData() {
     injuries
   };
 }
+
+
+
+function wordCompatibleHtml(d) {
+  let treatmentText = d.treatmentGivenText || DEFAULT_TREATMENT_TEXT;
+  if (d.treatment === 'Admitted') {
+    treatmentText = `Admitted at Upazila Health Complex, Mirzapur, Tangail on ${d.admittedOn} and discharged on ${d.discharged}`;
+  } else if (d.treatment === 'Referred to') {
+    treatmentText = `Patient was referred to ${d.referralCenter}`;
+  }
+
+  const cell = (label, value, colspan = 1, extra = '') => {
+    const width = `${colspan * 25}%`;
+    const content = `${label ? `<b>${escapeHtml(label)}</b>` : ''}${value ? ` ${escapeHtml(value)}` : '&nbsp;'}`;
+    return `<td colspan="${colspan}" width="${width}" style="width:${width};border:1px solid #8b9299;padding:2pt 5pt;vertical-align:middle;${extra}"><p style="margin:0;font-family:Calibri,Arial,sans-serif;font-size:10.5pt;line-height:1.05;">${content}</p></td>`;
+  };
+  const manualCell = (label) =>
+    `<td colspan="2" width="50%" style="width:50%;border:1px solid #8b9299;padding:2pt 5pt;vertical-align:middle;"><p style="margin:0;font-family:Calibri,Arial,sans-serif;font-size:10.5pt;"><b>${escapeHtml(label)}</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p></td>`;
+
+  const infoRows = [
+    `<tr>${manualCell('Memo No:')}${manualCell('Date:')}</tr>`,
+    `<tr>${cell('Police Requisition No:', d.policeRequisitionNo, 2)}${cell('Date:', d.policeRequisitionDate, 2)}</tr>`,
+    `<tr>${cell('1. Name of patient:', d.patientName, 2)}${cell('Age:', d.age)}${cell('Sex:', d.sex)}</tr>`,
+    `<tr>${cell("2. Father's / Husband's name:", d.guardian, 4)}</tr>`,
+    `<tr><td colspan="4" style="border:1px solid #8b9299;background:#f6f7f8;padding:6pt 7pt;"><p style="margin:0;font-family:Calibri,Arial,sans-serif;font-size:10.5pt;"><b>3. Address:</b></p></td></tr>`,
+    `<tr>${cell('Village:', d.village, 2, 'padding-left:35pt;')}${cell('Post Office:', d.postOffice, 2, 'padding-left:35pt;')}</tr>`,
+    `<tr>${cell('Thana:', d.thana, 2, 'padding-left:35pt;')}${cell('District:', d.district, 2, 'padding-left:35pt;')}</tr>`,
+    `<tr>${cell('4. Identification mark of the patient:', d.identification, 4)}</tr>`,
+    `<tr>${cell('5. Identifying person with mobile no.:', d.identifyingPerson, 4)}</tr>`,
+    `<tr>${cell('6. Hospital Registration No.:', d.registration, 2)}${cell('Date & Time of Examination:', d.examDateTime, 2)}</tr>`,
+    `<tr>${cell('7. Treatment Given / Admitted / Referred to:', treatmentText, 4)}</tr>`
+  ].join('');
+
+  const injuryRows = d.injuries.map((inj, i) => `
+    <tr>
+      <td width="6%" style="width:6%;border:1px solid #777;padding:3pt 4pt;text-align:center;vertical-align:top;height:34pt;">${String(i + 1).padStart(2, '0')}</td>
+      <td width="38%" style="width:38%;border:1px solid #777;padding:3pt 5pt;vertical-align:top;height:34pt;">${escapeHtml(inj.description)}</td>
+      <td width="17%" style="width:17%;border:1px solid #777;padding:3pt 5pt;vertical-align:top;height:34pt;">${escapeHtml(inj.age)}</td>
+      <td width="19%" style="width:19%;border:1px solid #777;padding:3pt 5pt;vertical-align:top;height:34pt;">${escapeHtml(inj.weapon)}</td>
+      <td width="20%" style="width:20%;border:1px solid #777;padding:3pt 5pt;vertical-align:top;height:34pt;">${escapeHtml(inj.nature)}</td>
+    </tr>`).join('');
+
+  return `<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">
+<head>
+<meta charset="UTF-8">
+<title>Injury Certificate</title>
+<style>
+@page Section1 { size:595.3pt 841.9pt; margin:39.7pt 42.5pt 39.7pt 42.5pt; }
+div.Section1 { page:Section1; }
+body { font-family:Calibri,Arial,sans-serif; color:#111; font-size:10.5pt; line-height:1.2; }
+p { margin:0; }
+table { border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; }
+.info-table { width:100%; table-layout:fixed; }
+.injury-table { width:100%; table-layout:fixed; font-size:9.5pt; }
+.injury-table th { border:1px solid #777; background:#f0f0f0; padding:6pt 4pt; text-align:center; font-weight:bold; vertical-align:middle; }
+.signature-table td { border:0; vertical-align:bottom; text-align:center; font-size:9.5pt; padding:22pt 4pt 0; }
+</style>
+</head>
+<body>
+<div class="Section1">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%;border:0;margin-bottom:10pt;">
+    <tr><td align="center" style="border:0;padding:0 0 3pt;"><p style="font-size:12pt;font-weight:bold;">Government of the People's Republic of Bangladesh</p></td></tr>
+    <tr><td align="center" style="border:0;padding:0 0 5pt;"><p style="font-size:12pt;font-weight:bold;">Upazila Health Complex, Mirzapur, Tangail</p></td></tr>
+    <tr><td align="center" style="border:0;padding:2pt 0 12pt;"><p style="font-size:14pt;font-weight:bold;">INJURY CERTIFICATE</p></td></tr>
+  </table>
+
+  <table class="info-table" width="100%" border="1" bordercolor="#8b9299" cellspacing="0" cellpadding="0" style="width:100%;border:1px solid #8b9299;border-collapse:collapse;table-layout:fixed;">
+    <colgroup><col width="25%" style="width:25%;"><col width="25%" style="width:25%;"><col width="25%" style="width:25%;"><col width="25%" style="width:25%;"></colgroup>
+    <tbody>${infoRows}</tbody>
+  </table>
+
+  <p style="font-family:Calibri,Arial,sans-serif;font-size:10.5pt;font-weight:bold;margin:7pt 0 6pt;">8. Findings of Examination: (As per below description)</p>
+
+  <table class="injury-table" width="100%" border="1" bordercolor="#777" cellspacing="0" cellpadding="0" style="width:100%;border:1px solid #777;border-collapse:collapse;table-layout:fixed;">
+    <colgroup><col width="6%" style="width:6%;"><col width="38%" style="width:38%;"><col width="17%" style="width:17%;"><col width="19%" style="width:19%;"><col width="20%" style="width:20%;"></colgroup>
+    <thead><tr>
+      <th width="6%">SL</th>
+      <th width="38%">Description of Injury</th>
+      <th width="17%">Age of Injury<br>(Approximate)</th>
+      <th width="19%">Nature of weapon</th>
+      <th width="20%">Nature of injury</th>
+    </tr></thead>
+    <tbody>${injuryRows}</tbody>
+  </table>
+
+  <table class="signature-table" width="100%" border="0" cellspacing="0" cellpadding="0" style="width:100%;border:0;margin-top:14pt;">
+    <tr><td colspan="3" height="20" style="height:14pt;border:0;font-size:1pt;line-height:14pt;">&nbsp;</td></tr>
+    <tr>
+      <td width="33.33%" style="padding:0 4pt;"><p>Signature and Seal of the<br>Attending Doctor</p></td>
+      <td width="33.33%" style="padding:0 4pt;"><p>Medical Board Member</p></td>
+      <td width="33.33%" style="padding:0 4pt;"><p>Medical Board Member</p></td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>`;
+}
+
+function createCertificatePdf(data) {
+  const PAGE_W = 794;
+  const PAGE_H = 1123;
+  const SCALE = 2;
+  const LEFT = 56;
+  const RIGHT = 56;
+  const TOP = 53;
+  const BOTTOM = 53;
+  const CONTENT_W = PAGE_W - LEFT - RIGHT;
+  const SIGNATURE_H = 82;
+  const FONT = 'Calibri, Arial, sans-serif';
+  const pages = [];
+
+  function makeCanvas() {
+    const canvas = document.createElement('canvas');
+    canvas.width = PAGE_W * SCALE;
+    canvas.height = PAGE_H * SCALE;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(SCALE, SCALE);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, PAGE_W, PAGE_H);
+    ctx.textBaseline = 'top';
+    return { canvas, ctx, y: TOP };
+  }
+
+  function setFont(ctx, size, bold = false) {
+    ctx.font = `${bold ? 'bold ' : ''}${size}px ${FONT}`;
+  }
+
+  function splitLines(ctx, text, maxWidth, size, bold = false) {
+    setFont(ctx, size, bold);
+    const words = String(text ?? '').split(/\s+/).filter(Boolean);
+    if (!words.length) return [''];
+    const lines = [];
+    let line = '';
+    for (const word of words) {
+      const candidate = line ? `${line} ${word}` : word;
+      if (ctx.measureText(candidate).width <= maxWidth || !line) {
+        if (!line && ctx.measureText(word).width > maxWidth) {
+          let piece = '';
+          for (const ch of word) {
+            if (piece && ctx.measureText(piece + ch).width > maxWidth) {
+              lines.push(piece);
+              piece = ch;
+            } else piece += ch;
+          }
+          line = piece;
+        } else line = candidate;
+      } else {
+        lines.push(line);
+        line = word;
+      }
+    }
+    if (line) lines.push(line);
+    return lines;
+  }
+
+  function inlineLines(ctx, label, value, maxWidth, size) {
+    const tokens = [];
+    String(label || '').split(/\s+/).filter(Boolean).forEach((word, i) =>
+      tokens.push({ text: word, bold: true, space: i > 0 })
+    );
+    String(value || '').split(/\s+/).filter(Boolean).forEach((word, i) =>
+      tokens.push({ text: word, bold: false, space: tokens.length > 0 || i > 0 })
+    );
+    if (!tokens.length) return [[]];
+    const lines = [[]];
+    let lineWidth = 0;
+    for (const token of tokens) {
+      setFont(ctx, size, token.bold);
+      const spaceWidth = token.space && lines[lines.length - 1].length ? ctx.measureText(' ').width : 0;
+      const wordWidth = ctx.measureText(token.text).width;
+      if (lineWidth + spaceWidth + wordWidth > maxWidth && lines[lines.length - 1].length) {
+        lines.push([]);
+        lineWidth = 0;
+        token.space = false;
+      }
+      lines[lines.length - 1].push(token);
+      setFont(ctx, size, token.bold);
+      lineWidth += (token.space && lines[lines.length - 1].length > 1 ? ctx.measureText(' ').width : 0) + wordWidth;
+    }
+    return lines;
+  }
+
+  function drawInlineLines(ctx, lines, x, y, size, lineHeight, color = '#111') {
+    ctx.fillStyle = color;
+    lines.forEach((line, lineIndex) => {
+      let cursor = x;
+      line.forEach((token, tokenIndex) => {
+        setFont(ctx, size, token.bold);
+        if (token.space && tokenIndex > 0) cursor += ctx.measureText(' ').width;
+        ctx.fillText(token.text, cursor, y + lineIndex * lineHeight);
+        cursor += ctx.measureText(token.text).width;
+      });
+    });
+  }
+
+  function drawInfoTable(page) {
+    const ctx = page.ctx;
+    const rows = [
+      [{ label: 'Memo No:', manual: true, span: 2 }, { label: 'Date:', manual: true, span: 2 }],
+      [{ label: 'Police Requisition No:', value: data.policeRequisitionNo, span: 2 }, { label: 'Date:', value: data.policeRequisitionDate, span: 2 }],
+      [{ label: '1. Name of patient:', value: data.patientName, span: 2 }, { label: 'Age:', value: data.age, span: 1 }, { label: 'Sex:', value: data.sex, span: 1 }],
+      [{ label: "2. Father's / Husband's name:", value: data.guardian, span: 4 }],
+      [{ label: '3. Address:', addressHeading: true, span: 4 }],
+      [{ label: 'Village:', value: data.village, span: 2, indent: 60 }, { label: 'Post Office:', value: data.postOffice, span: 2, indent: 60 }],
+      [{ label: 'Thana:', value: data.thana, span: 2, indent: 60 }, { label: 'District:', value: data.district, span: 2, indent: 60 }],
+      [{ label: '4. Identification mark of the patient:', value: data.identification, span: 4 }],
+      [{ label: '5. Identifying person with mobile no.:', value: data.identifyingPerson, span: 4 }],
+      [{ label: '6. Hospital Registration No.:', value: data.registration, span: 2 }, { label: 'Date & Time of Examination:', value: data.examDateTime, span: 2 }]
+    ];
+    let treatmentText = data.treatmentGivenText || 'Treatment given at Upazila Health Complex, Mirzapur, Tangail';
+    if (data.treatment === 'Admitted') {
+      treatmentText = `Admitted at Upazila Health Complex, Mirzapur, Tangail on ${data.admittedOn} and discharged on ${data.discharged}`;
+    } else if (data.treatment === 'Referred to') {
+      treatmentText = `Patient was referred to ${data.referralCenter}`;
+    }
+    rows.push([{ label: '7. Treatment Given / Admitted / Referred to:', value: treatmentText, span: 4 }]);
+
+    const fontSize = 15.33;
+    const lineHeight = 18.5;
+    const baseW = CONTENT_W / 4;
+    let y = page.y;
+
+    rows.forEach(row => {
+      const prepared = row.map(cell => {
+        const w = baseW * cell.span;
+        if (cell.addressHeading) return { ...cell, w, lines: [[{ text: '3. Address:', bold: true, space: false }]], height: 32 };
+        const indent = cell.indent || 0;
+        const lines = inlineLines(ctx, cell.label, cell.manual ? '' : cell.value, w - 16 - indent, fontSize);
+        return { ...cell, w, lines, height: Math.max(32, lines.length * lineHeight + 13) };
+      });
+      const rowH = Math.max(...prepared.map(c => c.height));
+      let x = LEFT;
+      prepared.forEach(cell => {
+        ctx.fillStyle = cell.addressHeading ? '#f6f7f8' : '#ffffff';
+        ctx.fillRect(x, y, cell.w, rowH);
+        ctx.strokeStyle = '#8b9299';
+        ctx.lineWidth = 0.8;
+        ctx.strokeRect(x, y, cell.w, rowH);
+        if (cell.addressHeading) {
+          drawInlineLines(ctx, cell.lines, x + 8, y + 8, fontSize, lineHeight);
+        } else {
+          drawInlineLines(ctx, cell.lines, x + 8 + (cell.indent || 0), y + 7, fontSize, lineHeight);
+        }
+        x += cell.w;
+      });
+      y += rowH;
+    });
+    page.y = y + 8;
+  }
+
+  function drawPageHeading(page, continued = false) {
+    const ctx = page.ctx;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#111';
+    setFont(ctx, 16, true);
+    ctx.fillText("Government of the People's Republic of Bangladesh", PAGE_W / 2, TOP);
+    setFont(ctx, 16, true);
+    ctx.fillText('Upazila Health Complex, Mirzapur, Tangail', PAGE_W / 2, TOP + 24);
+    setFont(ctx, 18.67, true);
+    ctx.fillText(continued ? 'INJURY CERTIFICATE (CONTINUED)' : 'INJURY CERTIFICATE', PAGE_W / 2, TOP + 54);
+    ctx.textAlign = 'left';
+    page.y = TOP + (continued ? 104 : 92);
+    if (!continued) drawInfoTable(page);
+  }
+
+  function drawSectionLabel(page, continued = false) {
+    const ctx = page.ctx;
+    setFont(ctx, 15.33, true);
+    ctx.fillStyle = '#111';
+    ctx.fillText(continued ? '8. Findings of Examination (continued)' : '8. Findings of Examination: (As per below description)', LEFT, page.y);
+    page.y += 24;
+  }
+
+  const columns = [
+    { title: 'SL', ratio: 0.06 },
+    { title: 'Description of Injury', ratio: 0.38 },
+    { title: 'Age of Injury (Approximate)', ratio: 0.17 },
+    { title: 'Nature of weapon', ratio: 0.19 },
+    { title: 'Nature of injury', ratio: 0.20 }
+  ];
+
+  function drawInjuryHeader(page) {
+    const ctx = page.ctx;
+    const headerH = 42;
+    let x = LEFT;
+    columns.forEach((col, index) => {
+      const w = CONTENT_W * col.ratio;
+      ctx.fillStyle = '#f0f0f0';
+      ctx.fillRect(x, page.y, w, headerH);
+      ctx.strokeStyle = '#777';
+      ctx.lineWidth = 0.8;
+      ctx.strokeRect(x, page.y, w, headerH);
+      const lines = splitLines(ctx, col.title, w - 10, 13.33, true);
+      ctx.fillStyle = '#111';
+      ctx.textAlign = 'center';
+      lines.forEach((line, li) => {
+        setFont(ctx, 13.33, true);
+        ctx.fillText(line, x + w / 2, page.y + 6 + li * 15);
+      });
+      x += w;
+    });
+    ctx.textAlign = 'left';
+    page.y += headerH;
+  }
+
+  function drawInjuryRow(page, injury, index) {
+    const ctx = page.ctx;
+    const values = [String(index + 1).padStart(2, '0'), injury.description, injury.age, injury.weapon, injury.nature];
+    const prepared = values.map((value, i) => {
+      const w = CONTENT_W * columns[i].ratio;
+      const fontSize = 13.33;
+      const lines = splitLines(ctx, value || '', w - 12, fontSize, false);
+      return { w, lines, height: Math.max(68, lines.length * 16 + 16) };
+    });
+    const rowH = Math.max(...prepared.map(c => c.height));
+    let x = LEFT;
+    prepared.forEach((cell, i) => {
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(x, page.y, cell.w, rowH);
+      ctx.strokeStyle = '#777';
+      ctx.lineWidth = 0.8;
+      ctx.strokeRect(x, page.y, cell.w, rowH);
+      ctx.fillStyle = '#111';
+      ctx.textAlign = i === 0 ? 'center' : 'left';
+      setFont(ctx, 13.33, false);
+      cell.lines.forEach((line, li) => {
+        ctx.fillText(line, i === 0 ? x + cell.w / 2 : x + 6, page.y + 8 + li * 16);
+      });
+      x += cell.w;
+    });
+    ctx.textAlign = 'left';
+    page.y += rowH;
+  }
+
+  function startContinuationPage() {
+    const page = makeCanvas();
+    drawPageHeading(page, true);
+    drawSectionLabel(page, true);
+    drawInjuryHeader(page);
+    pages.push(page);
+    return page;
+  }
+
+  let page = makeCanvas();
+  drawPageHeading(page, false);
+  drawSectionLabel(page, false);
+  drawInjuryHeader(page);
+  pages.push(page);
+
+  const maxTableBottom = PAGE_H - BOTTOM - SIGNATURE_H - 25;
+  data.injuries.forEach((injury, index) => {
+    const ctx = page.ctx;
+    const values = [String(index + 1).padStart(2, '0'), injury.description, injury.age, injury.weapon, injury.nature];
+    const measured = values.map((value, i) => {
+      const w = CONTENT_W * columns[i].ratio;
+      return Math.max(68, splitLines(ctx, value || '', w - 12, 13.33, false).length * 16 + 16);
+    });
+    const rowH = Math.max(...measured);
+    if (page.y + rowH > maxTableBottom && index < data.injuries.length) {
+      page = startContinuationPage();
+    }
+    drawInjuryRow(page, injury, index);
+  });
+
+  // Place the signature labels at the bottom of the final page, matching the certificate template.
+  const ctx = page.ctx;
+  const sigY = PAGE_H - BOTTOM - 48;
+  const sigLabels = [
+    'Signature and Seal of the Attending Doctor',
+    'Medical Board Member',
+    'Medical Board Member'
+  ];
+  const sigW = CONTENT_W / 3;
+  sigLabels.forEach((label, i) => {
+    const x = LEFT + i * sigW;
+    const lines = i === 0 ? ['Signature and Seal of the', 'Attending Doctor'] : [label];
+    ctx.fillStyle = '#111';
+    ctx.textAlign = 'center';
+    setFont(ctx, 13.33, false);
+    lines.forEach((line, li) => ctx.fillText(line, x + sigW / 2, sigY + li * 17));
+  });
+  ctx.textAlign = 'left';
+
+  // Assemble an image-based A4 PDF. All text is drawn locally on canvas; no network or print dialog is used.
+  const enc = new TextEncoder();
+  const ascii = text => enc.encode(text);
+  const binary = dataUrl => {
+    const base64 = dataUrl.split(',')[1];
+    const raw = atob(base64);
+    const out = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
+    return out;
+  };
+  const chunks = [];
+  let position = 0;
+  const push = bytes => { chunks.push(bytes); position += bytes.length; };
+  push(ascii('%PDF-1.4\n'));
+  const objectCount = 2 + pages.length * 3;
+  const offsets = new Array(objectCount + 1).fill(0);
+
+  function writeObject(number, parts) {
+    offsets[number] = position;
+    push(ascii(`${number} 0 obj\n`));
+    parts.forEach(part => push(typeof part === 'string' ? ascii(part) : part));
+    push(ascii('\nendobj\n'));
+  }
+
+  const pageRefs = pages.map((_, i) => `${3 + i * 3} 0 R`).join(' ');
+  writeObject(1, [`<< /Type /Catalog /Pages 2 0 R >>`]);
+  writeObject(2, [`<< /Type /Pages /Kids [${pageRefs}] /Count ${pages.length} >>`]);
+
+  pages.forEach((p, i) => {
+    const pageObj = 3 + i * 3;
+    const imageObj = pageObj + 1;
+    const contentObj = pageObj + 2;
+    const jpeg = binary(p.canvas.toDataURL('image/jpeg', 0.94));
+    const stream = ascii('q\n595.28 0 0 841.89 0 0 cm\n/Im0 Do\nQ');
+    writeObject(pageObj, [
+      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /XObject << /Im0 ${imageObj} 0 R >> >> /Contents ${contentObj} 0 R >>`
+    ]);
+    writeObject(imageObj, [
+      `<< /Type /XObject /Subtype /Image /Width ${p.canvas.width} /Height ${p.canvas.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>\nstream\n`,
+      jpeg,
+      '\nendstream'
+    ]);
+    writeObject(contentObj, [
+      `<< /Length ${stream.length} >>\nstream\n`,
+      stream,
+      '\nendstream'
+    ]);
+  });
+
+  const xrefOffset = position;
+  let xref = `xref\n0 ${objectCount + 1}\n0000000000 65535 f \n`;
+  for (let i = 1; i <= objectCount; i++) xref += `${String(offsets[i]).padStart(10, '0')} 00000 n \n`;
+  push(ascii(xref));
+  push(ascii(`trailer\n<< /Size ${objectCount + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`));
+  return new Blob(chunks, { type: 'application/pdf' });
+}
+
 function certificateHtml(d) {
+  const wordHtml = wordCompatibleHtml(d);
+  const safeDataJson = JSON.stringify(d).replace(/</g, '\\u003c');
   const injuryRows = d.injuries.map((inj, i) => `
     <tr>
       <td class="sl">${String(i+1).padStart(2,'0')}</td>
@@ -402,6 +845,7 @@ function certificateHtml(d) {
     .preview-toolbar button{border:1px solid #c4ced8;border-radius:6px;background:#fff;color:#24384b;padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer}
     .preview-toolbar button.primary{background:#173a5e;color:#fff;border-color:#173a5e}
     .preview-toolbar button:hover{filter:brightness(.96)}
+    .preview-toolbar button:disabled{opacity:.65;cursor:wait}
     .head{text-align:center}
     .gov{font-size:12pt;font-weight:bold;margin:0 0 4px}
     .hospital{font-size:12pt;font-weight:bold;margin:0 0 6px}
@@ -440,6 +884,7 @@ function certificateHtml(d) {
     <div class="preview-toolbar">
       <button type="button" onclick="editCertificate()">Edit</button>
       <button type="button" onclick="printCertificate()">Print</button>
+      <button type="button" class="primary" id="downloadPdfBtn" onclick="downloadPdf()">Download PDF</button>
       <button type="button" onclick="saveAsDoc()">Save as DOC</button>
     </div>
     <header class="head">
@@ -495,6 +940,10 @@ function certificateHtml(d) {
       <div class="sig">Medical Board Member</div>
     </section>
     <script>
+      const WORD_EXPORT_HTML = ${JSON.stringify(wordHtml)};
+      const CERTIFICATE_DATA = ${safeDataJson};
+      const createCertificatePdf = ${createCertificatePdf.toString()};
+
       function editCertificate(){
         if(window.opener && !window.opener.closed){
           window.opener.focus();
@@ -508,13 +957,7 @@ function certificateHtml(d) {
         window.print();
       }
       function saveAsDoc(){
-        const copy = document.body.cloneNode(true);
-        copy.querySelector('.preview-toolbar')?.remove();
-        copy.querySelector('.preview-help')?.remove();
-        copy.querySelectorAll('script').forEach(el => el.remove());
-        const docHtml = '<!DOCTYPE html><html>' + document.head.innerHTML +
-          '<body>' + copy.innerHTML + '</body></html>';
-        const blob = new Blob(['\\ufeff', docHtml], {type:'application/msword'});
+        const blob = new Blob(['\\ufeff', WORD_EXPORT_HTML], {type:'application/msword'});
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -522,7 +965,34 @@ function certificateHtml(d) {
         document.body.appendChild(link);
         link.click();
         link.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 1500);
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+      }
+      async function downloadPdf(){
+        const button = document.getElementById('downloadPdfBtn');
+        const originalText = button.textContent;
+        button.disabled = true;
+        button.textContent = 'Preparing PDF...';
+        try {
+          const blob = await createCertificatePdf(CERTIFICATE_DATA);
+          const safeName = (CERTIFICATE_DATA.patientName || 'Patient')
+            .replace(/[^a-z0-9_-]+/gi, '_').replace(/^_+|_+$/g, '').slice(0, 40) || 'Patient';
+          const filename = 'Injury Certificate - ' + safeName + '.pdf';
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = filename;
+          link.style.display = 'none';
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 30000);
+        } catch (error) {
+          console.error('PDF generation failed:', error);
+          alert('The PDF could not be generated on this device. Please use Print and choose Save as PDF.');
+        } finally {
+          button.disabled = false;
+          button.textContent = originalText;
+        }
       }
     <\/script>
   </body></html>`;

@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#173a5e">
+<meta name="application-name" content="Injury Certificate">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Injury Certificate">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="./assets/icons/icon-192.png">
+<link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png">
+<title>Injury Certificate</title>
+<style>
+:root{
+  --navy:#173a5e; --blue:#245987; --ink:#1f2937; --muted:#64748b;
+  --line:#d8e0e8; --soft:#f4f7fa; --white:#fff; --danger:#b42318;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#eef2f6;color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+.topbar{background:var(--navy);color:#fff;padding:18px 22px}
+.topbar-inner{max-width:1080px;margin:auto;display:flex;align-items:center;gap:12px}
+.logo{width:38px;height:38px;border:1px solid rgba(255,255,255,.5);border-radius:10px;display:grid;place-items:center;font-size:20px}
+.topbar h1{font-size:18px;margin:0;font-weight:650}
+.topbar p{font-size:12px;margin:4px 0 0;color:#d9e6f2}
+main{max-width:1080px;margin:24px auto;padding:0 16px 36px}
+.intro{margin-bottom:18px}
+.intro h2{font-size:22px;margin:0 0 6px;color:#142f4b}
+.intro p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+.notice{background:#fff8e8;border:1px solid #f1d89b;color:#6b4d0b;border-radius:10px;padding:11px 13px;font-size:13px;margin:16px 0}
+.card{background:var(--white);border:1px solid var(--line);border-radius:13px;padding:20px;margin:14px 0;box-shadow:0 2px 8px rgba(15,35,55,.035)}
+.section-head{display:flex;align-items:center;gap:10px;margin:0 0 17px;padding-bottom:12px;border-bottom:1px solid #e8edf2}
+.section-no{width:27px;height:27px;border-radius:8px;background:#e9f1f8;color:var(--navy);font-weight:700;display:grid;place-items:center;font-size:13px}
+.section-head h3{margin:0;font-size:16px;color:#173a5e}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px}
+.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.field{min-width:0}
+.field.full{grid-column:1/-1}
+label{display:block;font-size:13px;font-weight:700;margin:0 0 6px;color:#344256}
+.optional{font-weight:400;color:#8793a2;font-size:11px;margin-left:4px}
+input,select,textarea{width:100%;border:1px solid #cbd5df;border-radius:8px;background:#fff;padding:10px 11px;font:14px Arial,sans-serif;color:#1f2937;outline:none;min-height:41px}
+textarea{min-height:78px;resize:vertical;line-height:1.45}
+input:focus,select:focus,textarea:focus{border-color:#3977a8;box-shadow:0 0 0 3px rgba(57,119,168,.13)}
+.hint{font-size:11px;color:#7b8795;margin-top:5px}
+.address-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px}
+.treatment-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.choice{display:flex;align-items:center;gap:8px;border:1px solid #cbd5df;border-radius:9px;padding:11px;background:#fff;min-height:44px;cursor:pointer;font-size:13px}
+.choice input{width:16px;height:16px;min-height:0;margin:0;accent-color:var(--navy)}
+.choice:has(input:checked){border-color:#3977a8;background:#f0f6fb}
+.referral-box{margin-top:13px;padding:13px;background:#f6f9fc;border:1px solid #dbe5ee;border-radius:9px}
+.treatment-edit-row{display:flex;align-items:flex-start;gap:9px}
+.treatment-edit-row textarea{flex:1;min-width:0;min-height:66px}
+.edit-text-btn{border:1px solid #9aabba;border-radius:8px;background:#fff;color:#24435f;padding:10px 14px;font-size:13px;font-weight:650;cursor:pointer;min-height:41px}
+.edit-text-btn:hover{background:#edf4f9}
+
+.injury-card{border:1px solid #d5dee7;border-radius:10px;padding:15px;margin:0 0 12px;background:#fcfdfe}
+.injury-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.injury-top strong{font-size:14px;color:#173a5e}
+.remove-btn{border:0;background:transparent;color:var(--danger);font-size:12px;font-weight:600;cursor:pointer;padding:5px 2px}
+.remove-btn:disabled{opacity:.35;cursor:not-allowed}
+.injury-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:12px}
+.injury-grid .description{grid-column:1/-1}
+.injury-actions{display:flex;gap:10px;flex-wrap:wrap}
+.add-btn{display:inline-flex;align-items:center;gap:7px;border:1px dashed #7c9ab5;color:#214e76;background:#f7fbff;border-radius:8px;padding:10px 13px;font-weight:650;font-size:13px;cursor:pointer}
+.no-injury-choice{display:flex;justify-content:flex-start;margin:0 0 13px}
+.no-injury-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--navy);color:#fff;background:var(--navy);border-radius:9px;padding:12px 18px;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 2px 5px rgba(23,58,94,.16)}
+.no-injury-btn:hover{background:#0f2d4b;border-color:#0f2d4b}
+.add-btn:hover{background:#edf5fc}
+.actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:18px}
+.btn{border:1px solid #cbd5df;background:#fff;color:#344256;border-radius:9px;padding:12px 16px;font-weight:650;font-size:14px;cursor:pointer}
+.btn.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.btn.primary:hover{background:#0f2d4b}
+.btn:focus-visible,.add-btn:focus-visible,.remove-btn:focus-visible{outline:3px solid rgba(57,119,168,.28);outline-offset:2px}
+.footer-note{text-align:center;color:#7b8795;font-size:11px;margin-top:16px}
+.hidden{display:none!important}
+@media(max-width:700px){
+  .injury-actions{display:grid;grid-template-columns:1fr}
+  .injury-actions button{width:100%}
+  main{margin:17px auto;padding:0 11px 28px}
+  .card{padding:15px}
+  .grid,.grid.three,.address-grid{grid-template-columns:1fr}
+  .treatment-options{grid-template-columns:1fr}
+  .injury-grid{grid-template-columns:1fr}
+  .injury-grid .description{grid-column:auto}
+  .actions{display:grid;grid-template-columns:1fr}
+  .btn{width:100%}
+}
+@media print{body{background:#fff}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <h1>Injury Certificate</h1>
+  </div>
+</header>
+
+<main>
+  <div class="intro">
+    <h2>New injury certificate</h2>
+    <p>Enter the examination details below. Review the certificate before printing or saving it as a PDF.</p>
+  </div>
+
+  <div class="notice">
+    This prototype does not save patient information to a database. Information is used only to prepare the certificate in this browser.
+  </div>
+
+  <form id="certificateForm" autocomplete="off">
+    <section class="card">
+      <div class="section-head"><span class="section-no">1</span><h3>Patient information</h3></div>
+      <div class="grid three">
+        <div class="field">
+          <label for="patientName">Name of patient</label>
+          <input id="patientName" name="patientName" type="text" placeholder="Full name">
+        </div>
+        <div class="field">
+          <label for="patientAge">Age</label>
+          <input id="patientAge" name="patientAge" type="text" placeholder="e.g. 35 years">
+        </div>
+        <div class="field">
+          <label for="sex">Sex</label>
+          <select id="sex" name="sex">
+            <option value="">Select</option><option>Male</option><option>Female</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label for="guardianName">Father's / Husband's name</label>
+          <input id="guardianName" name="guardianName" type="text">
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-head"><span class="section-no">2</span><h3>Address and identification</h3></div>
+      <div class="address-grid">
+        <div class="field"><label for="village">Village</label><input id="village" name="village" type="text"></div>
+        <div class="field"><label for="postOffice">Post Office</label><input id="postOffice" name="postOffice" type="text"></div>
+        <div class="field"><label for="thana">Thana</label><input id="thana" name="thana" type="text"></div>
+        <div class="field"><label for="district">District</label><input id="district" name="district" type="text"></div>
+        <div class="field full">
+          <label for="identificationMark">Identification mark of the patient <span class="optional">Optional</span></label>
+          <input id="identificationMark" name="identificationMark" type="text">
+        </div>
+        <div class="field full">
+          <label for="identifyingPerson">Identifying person with mobile no. <span class="optional">Optional</span></label>
+          <input id="identifyingPerson" name="identifyingPerson" type="text" placeholder="Name and mobile number">
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-head"><span class="section-no">3</span><h3>Examination and treatment</h3></div>
+      <div class="grid">
+        <div class="field">
+          <label for="registrationNo">Hospital Registration No.</label>
+          <input id="registrationNo" name="registrationNo" type="text">
+        </div>
+        <div class="field">
+          <label for="examDateTime">Date &amp; Time of Examination</label>
+          <input id="examDateTime" name="examDateTime" type="datetime-local">
+        </div>
+        <div class="field">
+          <label for="policeRequisitionNo">Police Requisition No.</label>
+          <input id="policeRequisitionNo" name="policeRequisitionNo" type="text" placeholder="Enter police requisition number">
+        </div>
+        <div class="field">
+          <label for="policeRequisitionDate">Police Requisition Date</label>
+          <input id="policeRequisitionDate" name="policeRequisitionDate" type="date">
+        </div>
+        <div class="field full">
+          <label>Treatment status</label>
+          <div class="treatment-options">
+            <label class="choice"><input type="radio" name="treatment" value="Treatment Given" checked> Treatment Given</label>
+            <label class="choice"><input type="radio" name="treatment" value="Admitted"> Admitted</label>
+            <label class="choice"><input type="radio" name="treatment" value="Referred to"> Referred to</label>
+          </div>
+          <div id="treatmentGivenBox" class="referral-box">
+            <label for="treatmentGivenText">Treatment details</label>
+            <div class="treatment-edit-row">
+              <textarea id="treatmentGivenText" name="treatmentGivenText" rows="2" readonly>Treatment given at Upazila Health Complex, Mirzapur, Tangail</textarea>
+              <button type="button" class="edit-text-btn" id="editTreatmentText">Edit</button>
+            </div>
+            <p class="hint">The default sentence will be printed unless you edit it.</p>
+          </div>
+          <div id="referralBox" class="referral-box hidden">
+            <label for="referralCenter">Referral centre</label>
+            <input id="referralCenter" name="referralCenter" type="text" placeholder="Enter the name of the referral centre">
+          </div>
+        </div>
+        <div id="dischargeBox" class="field full hidden">
+          <label for="dischargedOn">Discharged on</label>
+          <input id="dischargedOn" name="dischargedOn" type="date">
+          <div class="hint">The admission date will be taken automatically from Date &amp; Time of Examination above.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-head"><span class="section-no">4</span><h3>Injury details</h3></div>
+      <p style="font-size:13px;color:#64748b;margin:-5px 0 14px;line-height:1.5">Select “No Visible Injury” when appropriate, or use “Add Injury” for each injury entry.</p>
+      <div class="no-injury-choice">
+        <button type="button" class="no-injury-btn" id="noVisibleInjury">✓ No Visible Injury</button>
+      </div>
+      <div id="injuryList"></div>
+      <div class="injury-actions"><button type="button" class="add-btn" id="addInjury">＋ Add Injury</button></div>
+    </section>
+
+    <div class="actions">
+      <button type="reset" class="btn" id="clearForm">Clear form</button>
+      <button type="button" class="btn primary" id="previewBtn">Preview certificate</button>
+    </div>
+  </form>
+  <div class="footer-note">Memo No., Memo Date and signatures are completed manually. Police Requisition No. and Date are entered in the form.</div>
+</main>
+
+<script>
+const injuryList = document.getElementById('injuryList');
+const referralBox = document.getElementById('referralBox');
+const referralInput = document.getElementById('referralCenter');
+const treatmentGivenBox = document.getElementById('treatmentGivenBox');
+const treatmentGivenText = document.getElementById('treatmentGivenText');
+const editTreatmentTextButton = document.getElementById('editTreatmentText');
+const dischargeBox = document.getElementById('dischargeBox');
+const dischargedOnInput = document.getElementById('dischargedOn');
+const DEFAULT_TREATMENT_TEXT = 'Treatment given at Upazila Health Complex, Mirzapur, Tangail';
+let noVisibleInjuryMode = false;
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[ch]));
+}
+function addInjury(values = {}) {
+  if (noVisibleInjuryMode) {
+    injuryList.innerHTML = '';
+    noVisibleInjuryMode = false;
+  }
+  const count = injuryList.children.length + 1;
+  const card = document.createElement('div');
+  card.className = 'injury-card';
+  card.innerHTML = `
+    <div class="injury-top">
+      <strong class="injury-number">Injury ${String(count).padStart(2,'0')}</strong>
+      <button type="button" class="remove-btn">Remove entry</button>
+    </div>
+    <div class="injury-grid">
+      <div class="field description">
+        <label>Description of injury</label>
+        <textarea class="inj-description" placeholder="Describe the injury and its location, size, appearance, examination findings, etc.">${escapeHtml(values.description || '')}</textarea>
+      </div>
+      <div class="field">
+        <label>Age of injury (approximate)</label>
+        <input class="inj-age" type="text" value="${escapeHtml(values.age || '')}" placeholder="e.g. About 3 hours">
+      </div>
+      <div class="field">
+        <label>Nature of weapon</label>
+        <input class="inj-weapon" type="text" value="${escapeHtml(values.weapon || '')}" placeholder="Enter findings">
+      </div>
+      <div class="field">
+        <label>Nature of injury</label>
+        <input class="inj-nature" type="text" value="${escapeHtml(values.nature || '')}" placeholder="Enter findings">
+      </div>
+    </div>`;
+  card.querySelector('.remove-btn').addEventListener('click', () => {
+    if (injuryList.children.length > 1) {
+      card.remove();
+      renumberInjuries();
+    }
+  });
+  injuryList.appendChild(card);
+  renumberInjuries();
+}
+function renumberInjuries() {
+  [...injuryList.children].forEach((card, i) => {
+    card.querySelector('.injury-number').textContent = `Injury ${String(i+1).padStart(2,'0')}`;
+    const btn = card.querySelector('.remove-btn');
+    btn.disabled = injuryList.children.length === 1;
+  });
+}
+document.getElementById('addInjury').addEventListener('click', () => addInjury());
+
+document.getElementById('noVisibleInjury').addEventListener('click', () => {
+  const hasEnteredData = [...injuryList.querySelectorAll('input, textarea')]
+    .some(el => el.value.trim() !== '');
+  if (hasEnteredData && !noVisibleInjuryMode) {
+    const proceed = confirm('Selecting “No Visible Injury” will replace the injury entries currently entered. Continue?');
+    if (!proceed) return;
+  }
+  injuryList.innerHTML = '';
+  noVisibleInjuryMode = false;
+  addInjury({
+    description: 'There is no visible external injury',
+    age: 'N/A',
+    weapon: 'N/A',
+    nature: 'N/A'
+  });
+  noVisibleInjuryMode = true;
+  const card = injuryList.firstElementChild;
+  card.querySelectorAll('input, textarea').forEach(el => {
+    el.readOnly = true;
+    el.style.background = '#f3f6f8';
+  });
+  card.querySelector('.remove-btn').disabled = true;
+});
+function updateTreatmentFields() {
+  const selected = document.querySelector('input[name="treatment"]:checked')?.value || 'Treatment Given';
+  treatmentGivenBox.classList.toggle('hidden', selected !== 'Treatment Given');
+  referralBox.classList.toggle('hidden', selected !== 'Referred to');
+  dischargeBox.classList.toggle('hidden', selected !== 'Admitted');
+  referralInput.required = selected === 'Referred to';
+  dischargedOnInput.required = selected === 'Admitted';
+}
+document.querySelectorAll('input[name="treatment"]').forEach(radio => {
+  radio.addEventListener('change', updateTreatmentFields);
+});
+editTreatmentTextButton.addEventListener('click', () => {
+  if (treatmentGivenText.readOnly) {
+    treatmentGivenText.readOnly = false;
+    treatmentGivenText.focus();
+    editTreatmentTextButton.textContent = 'Done';
+  } else {
+    treatmentGivenText.readOnly = true;
+    editTreatmentTextButton.textContent = 'Edit';
+  }
+});
+document.getElementById('clearForm').addEventListener('click', () => {
+  setTimeout(() => {
+    injuryList.innerHTML = '';
+    noVisibleInjuryMode = false;
+    addInjury();
+    treatmentGivenText.value = DEFAULT_TREATMENT_TEXT;
+    treatmentGivenText.readOnly = true;
+    editTreatmentTextButton.textContent = 'Edit';
+    updateTreatmentFields();
+  }, 0);
+});
+
+function value(id) { return document.getElementById(id).value.trim(); }
+function formatDateTime(raw) {
+  if (!raw) return '';
+  const d = new Date(raw);
+  if (Number.isNaN(d.getTime())) return raw;
+  return new Intl.DateTimeFormat('en-GB', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true}).format(d);
+}
+function formatDate(raw) {
+  if (!raw) return '';
+  const parts = raw.split('-');
+  return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : raw;
+}
+function collectData() {
+  const treatment = document.querySelector('input[name="treatment"]:checked')?.value || '';
+  const injuries = [...injuryList.children].map(card => ({
+    description: card.querySelector('.inj-description').value.trim(),
+    age: card.querySelector('.inj-age').value.trim(),
+    weapon: card.querySelector('.inj-weapon').value.trim(),
+    nature: card.querySelector('.inj-nature').value.trim()
+  }));
+  return {
+    patientName:value('patientName'), age:value('patientAge'), sex:value('sex'),
+    guardian:value('guardianName'), village:value('village'), postOffice:value('postOffice'),
+    thana:value('thana'), district:value('district'), identification:value('identificationMark'),
+    identifyingPerson:value('identifyingPerson'), registration:value('registrationNo'),
+    examDateTime:formatDateTime(value('examDateTime')),
+    policeRequisitionNo:value('policeRequisitionNo'),
+    policeRequisitionDate:formatDate(value('policeRequisitionDate')),
+    treatment,
+    treatmentGivenText:value('treatmentGivenText') || DEFAULT_TREATMENT_TEXT,
+    referralCenter:value('referralCenter'),
+    admittedOn:formatDate(value('examDateTime').slice(0,10)),
+    discharged:formatDate(value('dischargedOn')),
+    injuries
+  };
+}
+function certificateHtml(d) {
+  const injuryRows = d.injuries.map((inj, i) => `
+    <tr>
+      <td class="sl">${String(i+1).padStart(2,'0')}</td>
+      <td>${escapeHtml(inj.description)}</td>
+      <td>${escapeHtml(inj.age)}</td>
+      <td>${escapeHtml(inj.weapon)}</td>
+      <td>${escapeHtml(inj.nature)}</td>
+    </tr>`).join('');
+  let treatmentText = d.treatmentGivenText || 'Treatment given at Upazila Health Complex, Mirzapur, Tangail';
+  if (d.treatment === 'Admitted') {
+    treatmentText = `Admitted at Upazila Health Complex, Mirzapur, Tangail on ${d.admittedOn} and discharged on ${d.discharged}`;
+  } else if (d.treatment === 'Referred to') {
+    treatmentText = `Patient was referred to ${d.referralCenter}`;
+  }
+  const field = (label, value, colspan=1, extraClass='') =>
+    `<td colspan="${colspan}" class="${extraClass}"><div class="field-cell"><span class="field-label">${escapeHtml(label)}</span><span class="field-value">${escapeHtml(value || '')}</span></div></td>`;
+  const manual = (label, colspan=2) =>
+    `<td colspan="${colspan}"><div class="field-cell"><span class="field-label">${escapeHtml(label)}</span><span class="manual-space"></span></div></td>`;
+
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Injury Certificate</title>
+  <style>
+    @page{size:A4;margin:14mm 15mm}
+    *{box-sizing:border-box}
+    body{font-family:Calibri,Arial,sans-serif;color:#111;margin:0;font-size:11.5pt;line-height:1.25;min-height:269mm;display:flex;flex-direction:column}
+    body>*{flex-shrink:0}
+    .preview-toolbar{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin:0 0 16px;padding:10px;border:1px solid #d7dde4;border-radius:8px;background:#f5f7f9;font-family:Arial,sans-serif}
+    .preview-toolbar button{border:1px solid #c4ced8;border-radius:6px;background:#fff;color:#24384b;padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer}
+    .preview-toolbar button.primary{background:#173a5e;color:#fff;border-color:#173a5e}
+    .preview-toolbar button:hover{filter:brightness(.96)}
+    .head{text-align:center}
+    .gov{font-size:12pt;font-weight:bold;margin:0 0 4px}
+    .hospital{font-size:12pt;font-weight:bold;margin:0 0 6px}
+    h1{font-size:14pt;margin:3px 0 14px;font-weight:bold}
+    .info-table{width:100%;border-collapse:collapse;table-layout:fixed;margin:0 0 9px;font-size:11.5pt}
+    .info-table td{border:1px solid #8b9299;padding:7px 8px;vertical-align:middle;overflow-wrap:anywhere}
+    .info-table tr.address-subrow td{padding-left:16mm}
+    .info-table tr{break-inside:avoid}
+    .field-cell{display:flex;align-items:baseline;gap:5px;min-height:18px;flex-wrap:wrap}
+    .field-label{font-weight:bold;white-space:nowrap}
+    .field-value{font-weight:normal;min-width:0;overflow-wrap:anywhere}
+    .address-heading-cell{background:#f6f7f8}
+    .address-heading-cell .field-label{font-weight:bold}
+    .manual-space{display:inline-block;min-width:35mm;height:18px;vertical-align:bottom}
+    .section-label{margin:7px 0 6px;font-size:11.5pt;font-weight:bold}
+    table.injury-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:10pt}
+    .injury-table th,.injury-table td{border:1px solid #777;padding:8px 6px;vertical-align:top;overflow-wrap:anywhere}
+    .injury-table th{background:#f0f0f0;text-align:center;font-weight:bold}
+    .injury-table th:nth-child(1){width:6%}
+    .injury-table th:nth-child(2){width:38%}
+    .injury-table th:nth-child(3){width:17%}
+    .injury-table th:nth-child(4){width:19%}
+    .injury-table th:nth-child(5){width:20%}
+    .injury-table td.sl{text-align:center}
+    .injury-table tbody td{height:68px}
+    .injury-table thead{display:table-header-group}
+    .injury-table tr{break-inside:avoid}
+    .signatures{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:auto;padding-top:35px;break-inside:avoid}
+    .sig{min-height:62px;text-align:center;font-size:10pt;padding-top:40px}
+    @media screen{body{max-width:210mm;min-height:269mm;margin:20px auto;padding:14mm 15mm;box-shadow:0 1px 8px #bbb;background:white}}
+    @media print{
+      body{min-height:269mm}
+      .preview-toolbar{display:none!important}
+    }
+  </style></head><body>
+    <div class="preview-toolbar">
+      <button type="button" onclick="editCertificate()">Edit</button>
+      <button type="button" onclick="printCertificate()">Print</button>
+      <button type="button" onclick="saveAsDoc()">Save as DOC</button>
+    </div>
+    <header class="head">
+      <p class="gov">Government of the People's Republic of Bangladesh</p>
+      <p class="hospital">Upazila Health Complex, Mirzapur, Tangail</p>
+      <h1>INJURY CERTIFICATE</h1>
+    </header>
+
+    <table class="info-table">
+      <colgroup><col style="width:25%"><col style="width:25%"><col style="width:25%"><col style="width:25%"></colgroup>
+      <tbody>
+        <tr>
+          ${manual('Memo No:')}
+          ${manual('Date:')}
+        </tr>
+        <tr>
+          ${field('Police Requisition No:', d.policeRequisitionNo, 2)}
+          ${field('Date:', d.policeRequisitionDate, 2)}
+        </tr>
+        <tr>
+          ${field('1. Name of patient:', d.patientName, 2)}
+          ${field('Age:', d.age)}
+          ${field('Sex:', d.sex)}
+        </tr>
+        <tr>${field("2. Father's / Husband's name:", d.guardian, 4)}</tr>
+        <tr><td colspan="4" class="address-heading-cell"><span class="field-label">3. Address:</span></td></tr>
+        <tr class="address-subrow">
+          ${field('Village:', d.village, 2)}
+          ${field('Post Office:', d.postOffice, 2)}
+        </tr>
+        <tr class="address-subrow">
+          ${field('Thana:', d.thana, 2)}
+          ${field('District:', d.district, 2)}
+        </tr>
+        <tr>${field('4. Identification mark of the patient:', d.identification, 4)}</tr>
+        <tr>${field('5. Identifying person with mobile no.:', d.identifyingPerson, 4)}</tr>
+        <tr>
+          ${field('6. Hospital Registration No.:', d.registration, 2)}
+          ${field('Date & Time of Examination:', d.examDateTime, 2)}
+        </tr>
+        <tr>${field('7. Treatment Given / Admitted / Referred to:', treatmentText, 4)}</tr>
+      </tbody>
+    </table>
+
+    <p class="section-label">8. Findings of Examination: (As per below description)</p>
+    <table class="injury-table">
+      <thead><tr><th>SL</th><th>Description of Injury</th><th>Age of Injury<br>(Approximate)</th><th>Nature of weapon</th><th>Nature of injury</th></tr></thead>
+      <tbody>${injuryRows}</tbody>
+    </table>
+    <section class="signatures">
+      <div class="sig">Signature and Seal of the<br>Attending Doctor</div>
+      <div class="sig">Medical Board Member</div>
+      <div class="sig">Medical Board Member</div>
+    </section>
+    <script>
+      function editCertificate(){
+        if(window.opener && !window.opener.closed){
+          window.opener.focus();
+          window.close();
+        } else {
+          alert('Please return to the original Injury Certificate form to make changes.');
+        }
+      }
+      function printCertificate(){
+        window.focus();
+        window.print();
+      }
+      function saveAsDoc(){
+        const copy = document.body.cloneNode(true);
+        copy.querySelector('.preview-toolbar')?.remove();
+        copy.querySelector('.preview-help')?.remove();
+        copy.querySelectorAll('script').forEach(el => el.remove());
+        const docHtml = '<!DOCTYPE html><html>' + document.head.innerHTML +
+          '<body>' + copy.innerHTML + '</body></html>';
+        const blob = new Blob(['\\ufeff', docHtml], {type:'application/msword'});
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'Injury Certificate.doc';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+      }
+    <\/script>
+  </body></html>`;
+}
+function openCertificate() {
+  const data = collectData();
+  if (!data.patientName) {
+    alert('Please enter the patient name before generating the certificate.');
+    document.getElementById('patientName').focus();
+    return;
+  }
+  if (data.treatment === 'Referred to' && !data.referralCenter) {
+    alert('Please enter the referral centre.');
+    referralInput.focus();
+    return;
+  }
+  if (data.treatment === 'Admitted' && !data.admittedOn) {
+    alert('Please enter Date & Time of Examination. This date will be used as the admission date.');
+    document.getElementById('examDateTime').focus();
+    return;
+  }
+  if (data.treatment === 'Admitted' && !data.discharged) {
+    alert('Please enter the discharge date.');
+    dischargedOnInput.focus();
+    return;
+  }
+  if (!data.injuries.length || !data.injuries[0].description) {
+    alert('Please enter at least one injury description.');
+    injuryList.querySelector('.inj-description')?.focus();
+    return;
+  }
+  const win = window.open('', '_blank');
+  if (!win) {
+    alert('The certificate window was blocked. Please allow pop-ups for this page and try again.');
+    return;
+  }
+  win.document.open();
+  win.document.write(certificateHtml(data));
+  win.document.close();
+}
+document.getElementById('previewBtn').addEventListener('click', () => openCertificate());
+updateTreatmentFields();
+addInjury();
+</script>
+
+<script>
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js', { scope: './' })
+      .catch(error => console.warn('Offline app setup could not complete:', error));
+  });
+}
+</script>
+</body>
+</html>

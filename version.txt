@@ -1,4 +1,4 @@
 Injury Certificate PWA
-Version: 1.0.2
+Version: 1.0.3
 Based on: Approved Injury Certificate Version 8
-iOS Safari: responsive preview and Share-sheet file saving
+UI update: Removed Clear Form action; Preview Certificate is the only primary form action.

@@ -221,7 +221,6 @@ button,input,select,textarea{touch-action:manipulation}
     </section>
 
     <div class="actions">
-      <button type="reset" class="btn" id="clearForm">Clear form</button>
       <button type="button" class="btn primary" id="previewBtn">Preview certificate</button>
     </div>
   </form>
@@ -343,17 +342,6 @@ editTreatmentTextButton.addEventListener('click', () => {
     treatmentGivenText.readOnly = true;
     editTreatmentTextButton.textContent = 'Edit';
   }
-});
-document.getElementById('clearForm').addEventListener('click', () => {
-  setTimeout(() => {
-    injuryList.innerHTML = '';
-    noVisibleInjuryMode = false;
-    addInjury();
-    treatmentGivenText.value = DEFAULT_TREATMENT_TEXT;
-    treatmentGivenText.readOnly = true;
-    editTreatmentTextButton.textContent = 'Edit';
-    updateTreatmentFields();
-  }, 0);
 });
 
 function value(id) { return document.getElementById(id).value.trim(); }

@@ -1,4 +1,4 @@
 Injury Certificate PWA
-Version: 1.0.3
+Version: 1.0.5
 Based on: Approved Injury Certificate Version 8
-UI update: Removed Clear Form action; Preview Certificate is the only primary form action.
+Updates: genuine DOCX export; 11 pt certificate body; Simple/Grievous injury dropdown; collapsible Penal Code Section 320 reference; attending doctor information; final-page bottom-anchored signatures with injury-row pagination.

@@ -3,7 +3,7 @@ INJURY CERTIFICATE – OFFLINE PWA
 
 This package converts the approved Injury Certificate Version 8 into an installable
 Progressive Web App (PWA). Existing certificate fields, treatment options, injury
-table, preview, printing and DOC export are retained.
+table, preview, printing and DOCX export are retained.
 
 CONTENTS
 --------
@@ -38,3 +38,14 @@ For a new release, change CACHE_NAME in service-worker.js (for example, v2), upl
 the new files, and have devices reconnect to the HTTPS address.
 
 Version 1.0.3 update: The Clear Form action has been removed. Preview Certificate is now the only primary form action.
+
+Version 1.0.4 update:
+The PDF generator now uses embedded Carlito and Noto Sans Bengali fonts. PDF text metrics and line wrapping no longer depend on fonts installed on the device.
+
+Version 1.0.5 update:
+- Save as DOCX now generates a real Office Open XML .docx document, not a legacy .doc file.
+- Certificate body text and signature labels use 11 pt.
+- Nature of injury is selected as Simple or Grievous.
+- A collapsible reference to Penal Code, 1860, Section 320 is included in the form.
+- Attending doctor details can be entered and printed above the attending doctor's signature.
+- The signature block is bottom-positioned on the final page. Injury rows are moved with it when needed.

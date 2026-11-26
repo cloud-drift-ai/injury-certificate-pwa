@@ -31,8 +31,8 @@ completed certificates, or real patient data.
 
 iOS behaviour varies by version. Test the actual device before operational use.
 
-### Saving PDF and DOC on iPhone/iPad
-- Tap **Download PDF** or **Save as DOC** in the certificate preview.
+### Saving PDF and DOCX on iPhone/iPad
+- Tap **Download PDF** or **Save as DOCX** in the certificate preview.
 - On supported iOS versions, the iOS Share sheet opens.
 - Choose **Save to Files**, then select the required folder and tap **Save**.
 - If file sharing is not available on an older iOS version, the file opens in a new
@@ -53,23 +53,22 @@ After the first successful online opening:
 2. Enable airplane mode or disconnect Wi-Fi/mobile data.
 3. Reopen Injury Certificate from its installed icon.
 4. Test patient form entry, Add Injury, No Visible Injury, all three treatment options,
-   Preview, Edit, Print, Download PDF and Save as DOC.
-5. Open the DOC file in Microsoft Word and check the A4 page layout.
+   Preview, Edit, Print, Download PDF and Save as DOCX.
+5. Open the DOCX file in Microsoft Word or Google Docs and check the A4 page layout.
 6. Open the PDF and check the A4 page layout and legibility.
 
 The direct PDF action generates a PDF locally without opening the print dialog. It uses a
 high-resolution image of the certificate to preserve layout; text in that PDF may not be
-selectable. The DOC export is a Word-compatible HTML `.doc` file using table-based layout,
-not a native `.docx` file.
+selectable. The DOCX export is a native Office Open XML `.docx` file generated locally.
 
-Do not use the application operationally until offline reopening, PDF/DOC exports and
+Do not use the application operationally until offline reopening, PDF/DOCX exports and
 printing have been tested on the actual devices and printers used by the health complex.
 
 ## 6. Updates
 
 For each new release, change the cache name in `service-worker.js`, for example:
 
-`const CACHE_NAME = "injury-certificate-v1-0-2";`
+`const CACHE_NAME = "injury-certificate-v1-0-5";`
 
 Upload all updated files. Devices should reconnect to the HTTPS address to fetch the
 new version. Ask staff to open the app online before their next offline session.
@@ -83,3 +82,18 @@ new version. Ask staff to open the app online before their next offline session.
 - Close the app after printing/exporting and follow the health complex's confidentiality
   policy.
 - Browser memory, file downloads and printing behaviour vary by device and browser.
+
+
+## Version 1.0.4 – Consistent PDF typography
+The certificate preview includes embedded Carlito (Calibri-metric-compatible) and Noto Sans Bengali font files. The Download PDF button remains disabled until these fonts load. The generated PDF is image-based, so its font appearance and line wrapping are fixed at generation time and are not substituted by PDF viewers.
+
+
+## Version 1.0.5 – DOCX, legal reference and signature layout
+- The preview action is now **Save as DOCX** and creates a genuine Office Open XML `.docx` file locally.
+- The certificate body, injury table and signature labels use 11 pt text.
+- Nature of injury offers Simple and Grievous selections. No Visible Injury prints N/A.
+- The injury form includes a collapsed Section 320 statutory reference with a link to the official Bangladesh Laws website.
+- Attending doctor details (name, designation, workplace, PDS code and BMDC code) print above the attending doctor's signature when entered.
+- The DOCX signature table is positioned at the bottom of the final page. Pagination reserves room for it and moves injury rows to the signature page when needed.
+
+Test with Microsoft Word and Google Docs on representative devices before official use. Check multi-page injury descriptions and confirm the final-page injury row and signatures remain together.

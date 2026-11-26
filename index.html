@@ -100,11 +100,20 @@ button,input,select,textarea{touch-action:manipulation}
 
 
 /* Collapsible statutory reference */
-.law-reference{margin:0 0 15px;border:1px solid #d8e1e9;border-radius:9px;background:#f8fafc;overflow:hidden}
-.law-reference summary{cursor:pointer;list-style:none;padding:12px 14px;font-size:13px;font-weight:650;color:#24435f;display:flex;align-items:center;gap:9px}
+.law-reference{margin:0 0 15px;border:1px solid #a9bfd2;border-radius:12px;background:linear-gradient(135deg,#eef5fb 0%,#f9fbfd 100%);box-shadow:0 3px 10px rgba(31,65,95,.08);overflow:hidden}
+.law-reference summary{cursor:pointer;list-style:none;padding:13px 14px;font-size:13px;font-weight:650;color:#173a5e;display:flex;align-items:center;gap:11px;min-height:58px}
 .law-reference summary::-webkit-details-marker{display:none}
-.law-reference summary::before{content:'+';display:inline-grid;place-items:center;width:20px;height:20px;border:1px solid #b8c8d7;border-radius:50%;font-size:15px;line-height:1;flex:0 0 20px}
-.law-reference[open] summary::before{content:'−'}
+.law-reference summary:focus-visible{outline:3px solid rgba(36,91,137,.35);outline-offset:-3px}
+.law-reference-icon{display:grid;place-items:center;flex:0 0 36px;width:36px;height:36px;border-radius:10px;background:#245b89;color:#fff;font-size:22px;font-weight:700;box-shadow:0 2px 5px rgba(25,63,96,.18)}
+.law-reference-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+.law-reference-copy strong{font-size:13px;font-weight:750;color:#173a5e}
+.law-reference-copy>span{font-size:11px;font-weight:500;color:#536b80;line-height:1.35}
+.law-reference-toggle{display:flex;align-items:center;gap:8px;padding:7px 9px;border:1px solid #c7d7e5;border-radius:20px;background:#fff;color:#245b89;font-size:10px;font-weight:700;white-space:nowrap}
+.law-reference-chevron{width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin-top:-4px;transition:transform .18s ease}
+.law-reference[open] summary{background:#e5eff7;border-bottom:1px solid #d2e0eb}
+.law-reference[open] .law-reference-chevron{transform:rotate(225deg);margin-top:4px}
+.law-reference[open] .law-collapsed-label{display:none}
+.law-reference:not([open]) .law-expanded-label{display:none}
 .law-reference-body{padding:0 16px 14px;color:#334155;font-size:12px;line-height:1.55}
 .law-reference-body p{margin:0 0 8px}
 .law-reference-body ol{margin:6px 0 10px;padding-left:23px}
@@ -229,7 +238,18 @@ button,input,select,textarea{touch-action:manipulation}
       <div class="section-head"><span class="section-no">4</span><h3>Injury details</h3></div>
       <p style="font-size:13px;color:#64748b;margin:-5px 0 14px;line-height:1.5">Select “No Visible Injury” when appropriate, or use “Add Injury” for each injury entry.</p>
       <details class="law-reference">
-        <summary>Legal reference: Section 320 – Grievous hurt (Penal Code, 1860)</summary>
+        <summary>
+          <span class="law-reference-icon" aria-hidden="true">§</span>
+          <span class="law-reference-copy">
+            <strong>Legal reference</strong>
+            <span>Section 320 · Grievous hurt (Penal Code, 1860)</span>
+          </span>
+          <span class="law-reference-toggle">
+            <span class="law-collapsed-label">Tap to expand</span>
+            <span class="law-expanded-label">Tap to collapse</span>
+            <span class="law-reference-chevron" aria-hidden="true"></span>
+          </span>
+        </summary>
         <div class="law-reference-body">
           <p><strong>Section 320.</strong> The following kinds of hurt only are designated as “grievous”:</p>
           <ol>
@@ -253,41 +273,6 @@ button,input,select,textarea{touch-action:manipulation}
       <div class="injury-actions"><button type="button" class="add-btn" id="addInjury">＋ Add Injury</button></div>
     </section>
 
-
-    <section class="card">
-      <div class="section-head"><span class="section-no">5</span><h3>Attending doctor information</h3></div>
-      <div class="grid">
-        <div class="field">
-          <label for="doctorName">Doctor's Name</label>
-          <input id="doctorName" name="doctorName" type="text" placeholder="Full name">
-        </div>
-        <div class="field">
-          <label for="doctorDesignation">Designation</label>
-          <input id="doctorDesignation" name="doctorDesignation" type="text" placeholder="e.g. Medical Officer">
-        </div>
-        <div class="field">
-          <label for="doctorWorkplace">Workplace</label>
-          <select id="doctorWorkplace" name="doctorWorkplace">
-            <option value="">Select workplace</option>
-            <option value="Mirzapur UHC">Mirzapur UHC</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-        <div class="field hidden" id="doctorWorkplaceOtherBox">
-          <label for="doctorWorkplaceOther">Workplace name</label>
-          <input id="doctorWorkplaceOther" name="doctorWorkplaceOther" type="text" placeholder="Enter workplace name">
-        </div>
-        <div class="field">
-          <label for="doctorPdsCode">PDS Code</label>
-          <input id="doctorPdsCode" name="doctorPdsCode" type="text">
-        </div>
-        <div class="field">
-          <label for="doctorBmdcCode">BMDC Code</label>
-          <input id="doctorBmdcCode" name="doctorBmdcCode" type="text">
-        </div>
-      </div>
-    </section>
-
     <div class="actions">
       <button type="button" class="btn primary" id="previewBtn">Preview certificate</button>
     </div>
@@ -304,14 +289,6 @@ const treatmentGivenText = document.getElementById('treatmentGivenText');
 const editTreatmentTextButton = document.getElementById('editTreatmentText');
 const dischargeBox = document.getElementById('dischargeBox');
 const dischargedOnInput = document.getElementById('dischargedOn');
-
-const doctorWorkplaceSelect = document.getElementById('doctorWorkplace');
-const doctorWorkplaceOtherBox = document.getElementById('doctorWorkplaceOtherBox');
-function updateDoctorWorkplace() {
-  const isOther = doctorWorkplaceSelect.value === 'Other';
-  doctorWorkplaceOtherBox.classList.toggle('hidden', !isOther);
-}
-doctorWorkplaceSelect.addEventListener('change', updateDoctorWorkplace);
 
 const DEFAULT_TREATMENT_TEXT = 'Treatment given at Upazila Health Complex, Mirzapur, Tangail';
 let noVisibleInjuryMode = false;
@@ -446,10 +423,6 @@ function collectData() {
     weapon: card.querySelector('.inj-weapon').value.trim(),
     nature: noVisibleInjuryMode ? 'N/A' : card.querySelector('.inj-nature').value.trim()
   }));
-  const workplaceChoice = value('doctorWorkplace');
-  const doctorWorkplace = workplaceChoice === 'Mirzapur UHC'
-    ? 'Mirzapur Upazila Health Complex, Tangail'
-    : workplaceChoice === 'Other' ? value('doctorWorkplaceOther') : '';
   return {
     patientName:value('patientName'), age:value('patientAge'), sex:value('sex'),
     guardian:value('guardianName'), village:value('village'), postOffice:value('postOffice'),
@@ -463,11 +436,6 @@ function collectData() {
     referralCenter:value('referralCenter'),
     admittedOn:formatDate(value('examDateTime').slice(0,10)),
     discharged:formatDate(value('dischargedOn')),
-    doctorName:value('doctorName'),
-    doctorDesignation:value('doctorDesignation'),
-    doctorWorkplace,
-    doctorPdsCode:value('doctorPdsCode'),
-    doctorBmdcCode:value('doctorBmdcCode'),
     injuries
   };
 }
@@ -645,17 +613,10 @@ function createDocxBlob(data) {
     return {cells, heightPt};
   });
 
-  const doctorInfo = [
-    ["Doctor's Name", data.doctorName],
-    ["Designation", data.doctorDesignation],
-    ["Workplace", data.doctorWorkplace],
-    ["PDS Code", data.doctorPdsCode],
-    ["BMDC Code", data.doctorBmdcCode]
-  ].filter(item => String(item[1] || '').trim());
-  const signatureColumnWidthPt = contentWidthPt / 3 - 8;
-  const doctorInfoLineCount = doctorInfo.reduce((sum, item) =>
-    sum + wrapCount(`${item[0]}: ${item[1]}`, signatureColumnWidthPt, true), 0);
-  const signatureHeightPt = Math.max(52, doctorInfoLineCount * lineHeightPt + 30 + 27 + 8);
+  // Signature table is anchored inside the certificate body, above the bottom margin.
+  const signatureTopGapPt = 27;
+  const signatureBlankPt = 28;
+  const signatureHeightPt = signatureBlankPt + lineHeightPt * 2;
 
   const headerHeightPt = 58;
   const sectionHeadingHeightPt = 15;
@@ -675,7 +636,7 @@ function createDocxBlob(data) {
   while (index < injuryRows.length) {
     const startPt = firstFindingsPage ? firstStartPt : continuationStartPt;
     const fullCapacity = bodyHeightPt - startPt - safetyPt;
-    const finalCapacity = fullCapacity - signatureHeightPt - 70;
+    const finalCapacity = fullCapacity - signatureHeightPt - signatureTopGapPt;
     const remainingHeight = sumRows(index);
 
     if (remainingHeight <= finalCapacity) {
@@ -793,18 +754,23 @@ function createDocxBlob(data) {
   }
 
   function signatureTableXml() {
-    const blankSign = blankParagraph(28,0);
-    const doctorRuns = doctorInfo.map(item => paragraph(
-      [run(`${item[0]}: `,true),run(item[1],false)],
-      {line:lineHeightPt,keepLines:true}
-    ));
-    const doctorBlock = doctorRuns.join('');
-    const attendingCell = `<w:tc><w:tcPr><w:tcW w:w="3400" w:type="dxa"/><w:vAlign w:val="bottom"/></w:tcPr>${doctorBlock}${blankSign}${paragraph([run('Signature and Seal of the',false),'<w:r><w:br/></w:r>',run('Attending Doctor',false)],{align:'center',line:lineHeightPt,keepLines:true})}</w:tc>`;
-    const boardCell = label => `<w:tc><w:tcPr><w:tcW w:w="3400" w:type="dxa"/><w:vAlign w:val="bottom"/></w:tcPr>${blankParagraph(28,0)}${paragraph([run(label,false)],{align:'center',line:lineHeightPt,keepLines:true})}</w:tc>`;
+    const blankSign = blankParagraph(signatureBlankPt,0);
+    const attendingLabel = paragraph(
+      [run('Signature and Seal of the',false),'<w:r><w:br/></w:r>',run('Attending Doctor',false)],
+      {align:'center',line:lineHeightPt,keepLines:true}
+    );
+    const boardLabel = label => paragraph([run(label,false)],{align:'center',line:lineHeightPt,keepLines:true});
+    const signatureCell = labelXml =>
+      `<w:tc><w:tcPr><w:tcW w:w="3400" w:type="dxa"/><w:vAlign w:val="bottom"/></w:tcPr>${blankSign}${labelXml}</w:tc>`;
     const grid=[3400,3400,3400];
     const bordersNone='<w:tblBorders><w:top w:val="nil"/><w:left w:val="nil"/><w:bottom w:val="nil"/><w:right w:val="nil"/><w:insideH w:val="nil"/><w:insideV w:val="nil"/></w:tblBorders>';
-    const cells=attendingCell+boardCell('Medical Board Member')+boardCell('Medical Board Member');
-    return `<w:tbl><w:tblPr><w:tblpPr w:horzAnchor="margin" w:tblpXSpec="center" w:vertAnchor="page" w:tblpYSpec="bottom"/><w:tblW w:w="${contentWidthTwips}" w:type="dxa"/><w:tblLayout w:type="fixed"/>${bordersNone}<w:tblCellMar><w:top w:w="0" w:type="dxa"/><w:left w:w="50" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="50" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>${grid.map(w=>`<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid><w:tr><w:trPr><w:cantSplit/></w:trPr>${cells}</w:tr></w:tbl>`;
+    const cells =
+      signatureCell(attendingLabel) +
+      signatureCell(boardLabel('Medical Board Member')) +
+      signatureCell(boardLabel('Medical Board Member'));
+    // Page-anchored within the certificate body, 27 pt above the bottom content margin.
+    // It is deliberately not attached to the footer and leaves a clear gap below the labels.
+    return `<w:tbl><w:tblPr><w:tblpPr w:horzAnchor="margin" w:tblpXSpec="center" w:vertAnchor="page" w:tblpY="14400"/><w:tblW w:w="${contentWidthTwips}" w:type="dxa"/><w:tblLayout w:type="fixed"/>${bordersNone}<w:tblCellMar><w:top w:w="0" w:type="dxa"/><w:left w:w="50" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="50" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>${grid.map(w=>`<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid><w:tr><w:trPr><w:cantSplit/></w:trPr>${cells}</w:tr></w:tbl>`;
   }
 
   let body = '';
@@ -1177,19 +1143,14 @@ function createCertificatePdf(data) {
   drawInjuryHeader(page);
   pages.push(page);
 
-  const doctorInfoItems = [
-    ["Doctor's Name", data.doctorName],
-    ["Designation", data.doctorDesignation],
-    ["Workplace", data.doctorWorkplace],
-    ["PDS Code", data.doctorPdsCode],
-    ["BMDC Code", data.doctorBmdcCode]
-  ].filter(item => String(item[1] || '').trim());
-  const signatureColumnWidth = CONTENT_W / 3 - 14;
-  const doctorInfoWrapped = doctorInfoItems.flatMap(item =>
-    splitLines(page.ctx, `${item[0]}: ${item[1]}`, signatureColumnWidth, 14.67, false)
-  );
-  const signatureHeight = 48 + doctorInfoWrapped.length * 17.6 + 12;
-  const maxTableBottom = PAGE_H - BOTTOM - signatureHeight - 25;
+  // Position signatures in the certificate body, above the bottom margin.
+  // Leave a clear gap after the final injury row and more than one line below the labels.
+  const signatureGap = 22;
+  const signatureBlank = 30;
+  const signatureLineHeight = 17.6;
+  const signatureTextHeight = signatureLineHeight * 2;
+  const sigY = PAGE_H - BOTTOM - 78;
+  const maxTableBottom = sigY - signatureBlank - signatureGap;
   data.injuries.forEach((injury, index) => {
     const ctx = page.ctx;
     const values = [String(index + 1).padStart(2, '0'), injury.description, injury.age, injury.weapon, injury.nature];
@@ -1204,32 +1165,24 @@ function createCertificatePdf(data) {
     drawInjuryRow(page, injury, index);
   });
 
-  // The signature labels are anchored at the bottom of the final page.
-  // Doctor details, when entered, appear immediately above the attending doctor's signature area.
+  // Signatures follow the final injury row in the certificate body, not the footer.
   const ctx = page.ctx;
-  const sigY = PAGE_H - BOTTOM - 48;
+  // Fixed lower-page position, with a clear gap above the page bottom margin.
+  // The pagination reserve keeps the final injury row above the signature block.
+  
   const sigLabels = [
     'Signature and Seal of the Attending Doctor',
     'Medical Board Member',
     'Medical Board Member'
   ];
   const sigW = CONTENT_W / 3;
-  if (doctorInfoWrapped.length) {
-    ctx.textAlign = 'left';
-    ctx.fillStyle = '#111';
-    setFont(ctx, 14.67, false);
-    const doctorStartY = sigY - doctorInfoWrapped.length * 17.6 - 12;
-    doctorInfoWrapped.forEach((line, i) => {
-      ctx.fillText(line, LEFT + 7, doctorStartY + i * 17.6);
-    });
-  }
   sigLabels.forEach((label, i) => {
     const x = LEFT + i * sigW;
     const lines = i === 0 ? ['Signature and Seal of the', 'Attending Doctor'] : [label];
     ctx.fillStyle = '#111';
     ctx.textAlign = 'center';
     setFont(ctx, 14.67, false);
-    lines.forEach((line, li) => ctx.fillText(line, x + sigW / 2, sigY + li * 17.6));
+    lines.forEach((line, li) => ctx.fillText(line, x + sigW / 2, sigY + li * signatureLineHeight));
   });
   ctx.textAlign = 'left';
 
@@ -1311,15 +1264,6 @@ function certificateHtml(d) {
   const manual = (label, colspan=2) =>
     `<td colspan="${colspan}"><div class="field-cell"><span class="field-label">${escapeHtml(label)}</span><span class="manual-space"></span></div></td>`;
 
-  const doctorInfoHtml = [
-    ["Doctor's Name", d.doctorName],
-    ["Designation", d.doctorDesignation],
-    ["Workplace", d.doctorWorkplace],
-    ["PDS Code", d.doctorPdsCode],
-    ["BMDC Code", d.doctorBmdcCode]
-  ].filter(item => String(item[1] || '').trim())
-   .map(item => `<div>${escapeHtml(item[0])}: ${escapeHtml(item[1])}</div>`).join('');
-
   return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><title>Injury Certificate</title>
   <style>
 
@@ -1389,8 +1333,8 @@ function certificateHtml(d) {
     .injury-table tbody td{height:68px}
     .injury-table thead{display:table-header-group}
     .injury-table tr{break-inside:avoid}.injury-table tbody tr:last-child{break-after:avoid-page;page-break-after:avoid}
-    .signatures{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:auto;padding-top:35px;break-inside:avoid;page-break-inside:avoid;break-before:avoid-page}
-    .sig{min-height:62px;text-align:center;font-size:11pt;padding-top:0}.doctor-info{text-align:left;font-size:11pt;line-height:1.25;margin-bottom:4px}.signature-space{height:30px}
+    .signatures{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:auto;margin-bottom:27pt;padding-top:35px;break-inside:avoid;page-break-inside:avoid;break-before:avoid-page}
+    .sig{min-height:62px;text-align:center;font-size:11pt;padding-top:0}.signature-space{height:30px}
     @media screen{body{max-width:210mm;min-height:269mm;margin:20px auto;padding:14mm 15mm;box-shadow:0 1px 8px #bbb;background:white}}
 
     /* Responsive preview and safe-area handling for iPhone/iPad */
@@ -1476,7 +1420,7 @@ function certificateHtml(d) {
       <tbody>${injuryRows}</tbody>
     </table>
     <section class="signatures">
-      <div class="sig"><div class="doctor-info">${doctorInfoHtml}</div><div class="signature-space"></div>Signature and Seal of the<br>Attending Doctor</div>
+      <div class="sig"><div class="signature-space"></div>Signature and Seal of the<br>Attending Doctor</div>
       <div class="sig"><div class="signature-space"></div>Medical Board Member</div>
       <div class="sig"><div class="signature-space"></div>Medical Board Member</div>
     </section>
@@ -1643,7 +1587,6 @@ function openCertificate() {
 }
 document.getElementById('previewBtn').addEventListener('click', () => openCertificate());
 updateTreatmentFields();
-updateDoctorWorkplace();
 addInjury();
 </script>
 
